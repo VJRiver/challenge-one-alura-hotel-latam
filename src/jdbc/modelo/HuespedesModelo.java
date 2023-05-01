@@ -22,6 +22,15 @@ public class HuespedesModelo {
         this.idReserva = idReserva;
     }
 
+    public HuespedesModelo(String nombre, String apellido, Date fechaNacimiento, String nacionalidad, String telefono, Integer idReserva) {
+        this.nombre = nombre;
+        this.apellido = apellido;
+        this.fechaNacimiento = fechaNacimiento;
+        this.nacionalidad = nacionalidad;
+        this.telefono = telefono;
+        this.idReserva = idReserva;
+    }
+
     public Integer getId() {
         return id;
     }

@@ -41,7 +41,6 @@ public class UsuarioDao {
     }    
     
     public boolean validar(String nombre, String password) {
-//        Usuario resultado = new Usuario();
         boolean resultado = false;
 
         try {

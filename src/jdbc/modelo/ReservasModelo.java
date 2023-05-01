@@ -10,7 +10,7 @@ public class ReservasModelo {
     private String formaDePago;
     private String valor;
 
-    public ReservasModelo(Date fechaEntrada, Date fechaSalida, String formaDePago, String valor) {
+    public ReservasModelo(Date fechaEntrada, Date fechaSalida,  String valor, String formaDePago) {
         this.fechaEntrada = fechaEntrada;
         this.fechaSalida = fechaSalida;
         this.formaDePago = formaDePago;

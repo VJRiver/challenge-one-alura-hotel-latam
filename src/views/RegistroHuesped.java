@@ -7,6 +7,10 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.JTextField;
 import java.awt.Color;
 import com.toedter.calendar.JDateChooser;
+
+import jdbc.controller.HuespedesController;
+import jdbc.modelo.HuespedesModelo;
+
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
@@ -19,6 +23,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.sql.Date;
 import java.text.Format;
 import java.awt.event.ActionEvent;
 import java.awt.Toolkit;
@@ -38,6 +43,8 @@ public class RegistroHuesped extends JFrame {
 	private JLabel labelExit;
 	private JLabel labelAtras;
 	int xMouse, yMouse;
+	private HuespedesController huespedesController;
+	private static int id;
 
 	/**
 	 * Launch the application.
@@ -46,7 +53,7 @@ public class RegistroHuesped extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					RegistroHuesped frame = new RegistroHuesped();
+					RegistroHuesped frame = new RegistroHuesped(id);
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -58,7 +65,12 @@ public class RegistroHuesped extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public RegistroHuesped() {
+	public RegistroHuesped(int id) {
+	    try {
+            this.huespedesController = new HuespedesController();
+        } catch (Exception e1) {
+            throw new RuntimeException(e1);
+        }
 		
 		setIconImage(Toolkit.getDefaultToolkit().getImage(RegistroHuesped.class.getResource("/imagenes/lOGO-50PX.png")));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -76,8 +88,7 @@ public class RegistroHuesped extends JFrame {
 		header.addMouseMotionListener(new MouseMotionAdapter() {
 			@Override
 			public void mouseDragged(MouseEvent e) {
-				headerMouseDragged(e);
-			     
+				headerMouseDragged(e);			     
 			}
 		});
 		header.addMouseListener(new MouseAdapter() {
@@ -210,6 +221,10 @@ public class RegistroHuesped extends JFrame {
 		txtNreserva.setColumns(10);
 		txtNreserva.setBackground(Color.WHITE);
 		txtNreserva.setBorder(javax.swing.BorderFactory.createEmptyBorder());
+		txtNreserva.setEditable(false);
+		
+		txtNreserva.setText(String.valueOf(id)); 
+		
 		contentPane.add(txtNreserva);
 		
 		JSeparator separator_1_2 = new JSeparator();
@@ -250,11 +265,18 @@ public class RegistroHuesped extends JFrame {
 		
 		JPanel btnguardar = new JPanel();
 		btnguardar.setBounds(723, 560, 122, 35);
+		
+		/*
+		 * Aquí llamamos al guardarHuesped
+		 */
 		btnguardar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+			    guardarHuesped();
 			}
 		});
+		
+		
 		btnguardar.setLayout(null);
 		btnguardar.setBackground(new Color(12, 138, 199));
 		contentPane.add(btnguardar);
@@ -315,7 +337,34 @@ public class RegistroHuesped extends JFrame {
 		labelExit.setFont(new Font("Roboto", Font.PLAIN, 18));
 	}
 	
-	
+    private void guardarHuesped() {
+        String FechaN =        
+                ((JTextField)txtFechaN.getDateEditor().getUiComponent()).getText();
+        if(!txtNombre.getText().isEmpty() && 
+                !txtApellido.getText().isEmpty() && 
+                !txtTelefono.getText().isEmpty() && 
+                !txtNreserva.getText().isEmpty() && 
+                txtFechaN.getDate() != null && 
+                txtNacionalidad.getSelectedItem() != null) {
+            HuespedesModelo nuevoHuesped = new HuespedesModelo(
+                    txtNombre.getText(),
+                    txtApellido.getText(), 
+                    Date.valueOf(FechaN), 
+                    txtNacionalidad.getSelectedItem().toString(), 
+                    txtTelefono.getText(), 
+                    Integer.valueOf(txtNreserva.getText()));
+            
+            try {
+                huespedesController.guardarHuesped(nuevoHuesped);
+                JOptionPane.showMessageDialog(contentPane, "Huesped guardado!");
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }else {
+            JOptionPane.showMessageDialog(contentPane, "Datos incompletos");
+        }
+        
+    }
 	//Código que permite mover la ventana por la pantalla según la posición de "x" y "y"	
 	 private void headerMousePressed(java.awt.event.MouseEvent evt) {
 	        xMouse = evt.getX();

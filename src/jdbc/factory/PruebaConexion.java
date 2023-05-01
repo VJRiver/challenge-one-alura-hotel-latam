@@ -31,35 +31,8 @@ public class PruebaConexion {
             e.printStackTrace();
         }
         
-         
-        
-        
-        
-        
-//        DataSource dataSource;
-//        ComboPooledDataSource comboPooledDataSource = new ComboPooledDataSource();
-//        comboPooledDataSource.setJdbcUrl("jdbc:mysql://localhost:3306/hotel_db?useTimeZone=true&serverTimeZone=UTC");
-//        comboPooledDataSource.setUser("root");
-//        comboPooledDataSource.setPassword("toor");
-////       Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/hotel_db?useTimeZone=true&serverTimeZone=UTC", "root", "toor");
-//        dataSource = comboPooledDataSource;
-//        try {
-//            Connection con = dataSource.getConnection();
-//            System.out.println("Cerrando conexion");
-//        }catch(SQLException e) {
-//            throw new RuntimeException(e);
-//        }
-//       con.close();
-               }
-
+    }
 }
-
-
-
-
-
-
-
 
 
 

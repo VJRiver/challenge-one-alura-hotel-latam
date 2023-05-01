@@ -233,13 +233,11 @@ public class Login extends JFrame {
 	}
 	
 	private void Login() {
-//		 String Usuario= "admin";
-//	     String Contraseña="admin";
 
 	    try {
             usuario = new UsuarioController();
         } catch (Exception e) {
-            // TODO Auto-generated catch block
+
             e.printStackTrace();
         }
 	    String Usuario=new String (txtUsuario.getText());

@@ -364,7 +364,10 @@ public class ReservasView extends JFrame {
         String FechaE = ((JTextField) txtFechaEntrada.getDateEditor().getUiComponent()).getText();
         String FechaS = ((JTextField) txtFechaSalida.getDateEditor().getUiComponent()).getText();
         
-        ReservasModelo nuevaReserva = new ReservasModelo(Date.valueOf(FechaE), Date.valueOf(FechaS), txtValor.getText(),
+        ReservasModelo nuevaReserva = new ReservasModelo(
+                Date.valueOf(FechaE), 
+                Date.valueOf(FechaS), 
+                txtValor.getText(),                
                 txtFormaPago.getSelectedItem().toString());
         
         boolean guardado = reservasController.guardar(nuevaReserva);

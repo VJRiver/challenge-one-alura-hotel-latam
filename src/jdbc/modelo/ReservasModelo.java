@@ -17,8 +17,7 @@ public class ReservasModelo {
         this.valor = valor;
     }
 
-
-    public ReservasModelo(Integer id, Date fechaEntrada, Date fechaSalida, String formaDePago, String valor) {
+    public ReservasModelo(Integer id, Date fechaEntrada, Date fechaSalida, String valor, String formaDePago) {
         this.id = id;
         this.fechaEntrada = fechaEntrada;
         this.fechaSalida = fechaSalida;

@@ -10,10 +10,7 @@ import jdbc.factory.ConnectionFactory;
 import jdbc.modelo.HuespedesModelo;
 
 public class HuespedesDao {
-    final private Connection con;
-
     public HuespedesDao(Connection con) {
-        this.con = con;
     }
     
     public void guardarHuesped(HuespedesModelo huesped) throws Exception {

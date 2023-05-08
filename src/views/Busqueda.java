@@ -1,30 +1,30 @@
 package views;
 
-import java.awt.EventQueue;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.JButton;
-import javax.swing.ImageIcon;
 import java.awt.Color;
-import java.awt.SystemColor;
-import javax.swing.JLabel;
+import java.awt.EventQueue;
 import java.awt.Font;
-import java.awt.event.ActionListener;
-import java.util.List;
-import java.awt.event.ActionEvent;
-import javax.swing.JTabbedPane;
 import java.awt.Toolkit;
-import javax.swing.SwingConstants;
-import javax.swing.JSeparator;
-import javax.swing.ListSelectionModel;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.util.List;
+
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
+
+import jdbc.controller.ReservasController;
+import jdbc.modelo.ReservasModelo;
 
 @SuppressWarnings("serial")
 public class Busqueda extends JFrame {
@@ -38,6 +38,7 @@ public class Busqueda extends JFrame {
 	private JLabel labelAtras;
 	private JLabel labelExit;
 	int xMouse, yMouse;
+	private ReservasController reservasController;
 
 	/**
 	 * Launch the application.
@@ -57,8 +58,15 @@ public class Busqueda extends JFrame {
 
 	/**
 	 * Create the frame.
+	 * @throws Exception 
 	 */
 	public Busqueda() {
+	    try {
+            this.reservasController = new ReservasController();
+        } catch (Exception e1) {
+            // TODO Auto-generated catch block
+            throw new RuntimeException(e1);
+        }
 		setIconImage(Toolkit.getDefaultToolkit().getImage(Busqueda.class.getResource("/imagenes/lupa2.png")));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 910, 571);
@@ -87,9 +95,7 @@ public class Busqueda extends JFrame {
 		panel.setBackground(new Color(12, 138, 199));
 		panel.setFont(new Font("Roboto", Font.PLAIN, 16));
 		panel.setBounds(20, 169, 865, 328);
-		contentPane.add(panel);
-
-		
+		contentPane.add(panel);		
 		
 		
 		tbReservas = new JTable();
@@ -216,7 +222,7 @@ public class Busqueda extends JFrame {
 		btnbuscar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-
+			    llenarTablaReservas();
 			}
 		});
 		btnbuscar.setLayout(null);
@@ -260,6 +266,21 @@ public class Busqueda extends JFrame {
 		lblEliminar.setBounds(0, 0, 122, 35);
 		btnEliminar.add(lblEliminar);
 		setResizable(false);
+	}
+	
+	private List<ReservasModelo> buscarReservas(){
+	    return this.reservasController.buscar();	   
+	}
+	
+	private void llenarTablaReservas() {	    
+	    List<ReservasModelo> reserva = buscarReservas();	    
+	        try {
+	            for(ReservasModelo r: reserva) {	                
+	                modelo.addRow(new Object[] {r.getId(), r.getFechaEntrada(), r.getFechaSalida(), r.getValor(), r.getFormaDePago()});
+	            }
+	        }catch(Exception e) {
+	            throw new RuntimeException(e);
+	        }    
 	}
 	
 //Código que permite mover la ventana por la pantalla según la posición de "x" y "y"

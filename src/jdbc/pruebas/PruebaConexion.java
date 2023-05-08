@@ -1,4 +1,4 @@
-package jdbc.factory;
+package jdbc.pruebas;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -8,6 +8,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import javax.sql.DataSource;
+
+import jdbc.factory.ConnectionFactory;
 
 
 public class PruebaConexion {

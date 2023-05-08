@@ -358,6 +358,7 @@ public class RegistroHuesped extends JFrame {
                 huespedesController.guardarHuesped(nuevoHuesped);
                 JOptionPane.showMessageDialog(contentPane, "Huesped guardado!");
             } catch (Exception e) {
+                JOptionPane.showMessageDialog(contentPane, "Error al guardar el registro, revise su información");
                 throw new RuntimeException(e);
             }
         }else {

@@ -14,7 +14,7 @@ import jdbc.modelo.ReservasModelo;
 public class ReservasDao {
 
     final private Connection con;
-    private List<ReservasModelo> reservas = new ArrayList<>();
+//    private List<ReservasModelo> reservas = new ArrayList<>();
     public ReservasDao(Connection con) {
         this.con = con;        
     }
@@ -58,7 +58,7 @@ public class ReservasDao {
     }
     
     public List<ReservasModelo> buscar(){
-        
+        List<ReservasModelo> reservas = new ArrayList<>();
         String sql = "SELECT id, fecha_entrada, fecha_salida, valor, forma_de_pago FROM reservas";
         try {
             final PreparedStatement ps = con.prepareStatement(sql);
@@ -68,21 +68,37 @@ public class ReservasDao {
                 }
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        }        
+        }
         return reservas;
    }
+    
+    public List<ReservasModelo> buscarId(int id){  
+        List<ReservasModelo> reservas = new ArrayList<>();
+        String sql = "SELECT id, fecha_entrada, fecha_salida, valor, forma_de_pago FROM reservas WHERE id = ?";
+        try {
+            final PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, id);
+            ps.execute();
+            transformarResultSetEnReserva(reservas, ps);
+        }catch(SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return reservas;
+    }
     
     public void transformarResultSetEnReserva(List<ReservasModelo> reservas, PreparedStatement ps) {
         try(ResultSet rs = ps.getResultSet()){
             while(rs.next()) {
                 ReservasModelo reserva;
                 reserva = new ReservasModelo(rs.getInt(1), rs.getDate(2), rs.getDate(3), rs.getString(4), rs.getString(5));
-                System.out.println("Reserva:" + reserva.getId() + ", valor: " + reserva.getValor());
                 reservas.add(reserva);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+        System.out.println("Tamaño de lista en"
+                + " ReservasDao.transformarResultSetEnReserva(): " 
+                + reservas.size());
     }
 }
 

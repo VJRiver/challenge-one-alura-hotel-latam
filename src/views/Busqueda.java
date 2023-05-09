@@ -12,6 +12,7 @@ import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
@@ -64,7 +65,6 @@ public class Busqueda extends JFrame {
 	    try {
             this.reservasController = new ReservasController();
         } catch (Exception e1) {
-            // TODO Auto-generated catch block
             throw new RuntimeException(e1);
         }
 		setIconImage(Toolkit.getDefaultToolkit().getImage(Busqueda.class.getResource("/imagenes/lupa2.png")));
@@ -102,11 +102,7 @@ public class Busqueda extends JFrame {
 		tbReservas.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		tbReservas.setFont(new Font("Roboto", Font.PLAIN, 16));
 		modelo = (DefaultTableModel) tbReservas.getModel();
-		modelo.addColumn("Numero de Reserva");
-		modelo.addColumn("Fecha Check In");
-		modelo.addColumn("Fecha Check Out");
-		modelo.addColumn("Valor");
-		modelo.addColumn("Forma de Pago");
+		establecerColumnasReserva();
 		JScrollPane scroll_table = new JScrollPane(tbReservas);
 		panel.addTab("Reservas", new ImageIcon(Busqueda.class.getResource("/imagenes/reservado.png")), scroll_table, null);
 		scroll_table.setVisible(true);
@@ -222,7 +218,30 @@ public class Busqueda extends JFrame {
 		btnbuscar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-			    llenarTablaReservas();
+			    int numeroDeFilas = modelo.getRowCount();
+			    
+		        if(numeroDeFilas > 0) {
+		            System.out.println("Tamaño de modelo antes del for: " + modelo.getRowCount());
+		            for(int i = numeroDeFilas; i>= 1; i--) {
+		                System.out.println("Iteracion: " + i + ", filas totales: " + modelo.getRowCount());
+		                modelo.removeRow(i-1);
+
+		            }
+                    modelo.fireTableStructureChanged();
+		            System.out.println("Tamaño de modelo despues del for: " + modelo.getRowCount());
+		        }
+			    if(txtBuscar.getText().isEmpty()) {
+			        llenarTablaReservas();
+			    }else {
+			        int idIngresado;
+                    try {
+                        idIngresado = Integer.parseInt(txtBuscar.getText());
+                        llenarTablaReservasId(idIngresado);
+                    } catch (NumberFormatException e1) {
+                        JOptionPane.showInternalMessageDialog(null, "Entrada no válida, favor de ingresar únicamente números", "Error", JOptionPane.ERROR_MESSAGE);
+                        throw new RuntimeException(e1);
+                    }
+			    }			    
 			}
 		});
 		btnbuscar.setLayout(null);
@@ -267,13 +286,26 @@ public class Busqueda extends JFrame {
 		btnEliminar.add(lblEliminar);
 		setResizable(false);
 	}
+
+    private void establecerColumnasReserva() {
+        modelo.addColumn("Numero de Reserva");
+		modelo.addColumn("Fecha Check In");
+		modelo.addColumn("Fecha Check Out");
+		modelo.addColumn("Valor");
+		modelo.addColumn("Forma de Pago");
+    }
 	
 	private List<ReservasModelo> buscarReservas(){
 	    return this.reservasController.buscar();	   
 	}
 	
-	private void llenarTablaReservas() {	    
-	    List<ReservasModelo> reserva = buscarReservas();	    
+	private List<ReservasModelo> buscarId(int id){
+	    return this.reservasController.buscarId(id);
+	}
+	
+	private void llenarTablaReservas() {
+
+	    List<ReservasModelo> reserva = buscarReservas();
 	        try {
 	            for(ReservasModelo r: reserva) {	                
 	                modelo.addRow(new Object[] {r.getId(), r.getFechaEntrada(), r.getFechaSalida(), r.getValor(), r.getFormaDePago()});
@@ -283,7 +315,18 @@ public class Busqueda extends JFrame {
 	        }    
 	}
 	
-//Código que permite mover la ventana por la pantalla según la posición de "x" y "y"
+	   private void llenarTablaReservasId(int id) {    
+
+	        List<ReservasModelo> reserva = buscarId(id);  
+	            try {
+	                for(ReservasModelo r: reserva) {                    
+	                    modelo.addRow(new Object[] {r.getId(), r.getFechaEntrada(), r.getFechaSalida(), r.getValor(), r.getFormaDePago()});
+	                }
+	            }catch(Exception e) {
+	                throw new RuntimeException(e);
+	            }    
+	    }
+	
 	 private void headerMousePressed(java.awt.event.MouseEvent evt) {
 	        xMouse = evt.getX();
 	        yMouse = evt.getY();
@@ -295,3 +338,12 @@ public class Busqueda extends JFrame {
 	        this.setLocation(x - xMouse, y - yMouse);
 }
 }
+
+
+
+
+
+
+
+
+

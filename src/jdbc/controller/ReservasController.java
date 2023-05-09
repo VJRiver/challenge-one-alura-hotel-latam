@@ -11,17 +11,19 @@ public class ReservasController {
     
     public ReservasController() throws Exception {
         var factory = new ConnectionFactory();
-        this.reservasDao = new ReservasDao(factory.recuperarConexion());
-        
+        this.reservasDao = new ReservasDao(factory.recuperarConexion());        
     }
     
-    public boolean guardar(ReservasModelo reservasModelo) {
-        
+    public boolean guardar(ReservasModelo reservasModelo) {        
         return reservasDao.guardar(reservasModelo);        
     }
     
     public List<ReservasModelo> buscar(){
         return reservasDao.buscar();
+    }
+    
+    public List<ReservasModelo> buscarId(int id){
+        return reservasDao.buscarId(id);
     }
 }
 

@@ -26,6 +26,7 @@ public class PruebaDatos{
             e1.printStackTrace();
         }
        
+        // 
         try{
             ReservasController reservasController = new ReservasController();
             reservasController.buscar();
@@ -33,11 +34,29 @@ public class PruebaDatos{
             Connection con = conecta.recuperarConexion();
             reserva = new ReservasDao(con);
             reservas = reserva.buscar();
+//            con.close();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        
+        // checamos busqueda por Id
+        
+        try{
+            ReservasController reservasController = new ReservasController();
+ 
+            conecta = new ConnectionFactory();
+            Connection con = conecta.recuperarConexion();
+            reserva = new ReservasDao(con);
+            reservas = reservasController.buscarId(16);
+            System.out.println("Prueba de buscarId");
+            for(ReservasModelo rm : reservas) {
+                System.out.println(rm.getId() +": " + rm.getValor());
+            }
+//            con.close();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
-
 }
 
 

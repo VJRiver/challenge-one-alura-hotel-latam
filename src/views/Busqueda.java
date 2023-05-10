@@ -7,7 +7,9 @@ import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.sql.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -24,7 +26,9 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
+import jdbc.controller.HuespedesController;
 import jdbc.controller.ReservasController;
+import jdbc.modelo.HuespedesModelo;
 import jdbc.modelo.ReservasModelo;
 
 @SuppressWarnings("serial")
@@ -40,6 +44,7 @@ public class Busqueda extends JFrame {
 	private JLabel labelExit;
 	int xMouse, yMouse;
 	private ReservasController reservasController;
+	private HuespedesController huespedesController;
 
 	/**
 	 * Launch the application.
@@ -57,13 +62,10 @@ public class Busqueda extends JFrame {
 		});
 	}
 
-	/**
-	 * Create the frame.
-	 * @throws Exception 
-	 */
 	public Busqueda() {
 	    try {
             this.reservasController = new ReservasController();
+            this.huespedesController = new HuespedesController();
         } catch (Exception e1) {
             throw new RuntimeException(e1);
         }
@@ -218,21 +220,12 @@ public class Busqueda extends JFrame {
 		btnbuscar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-			    int numeroDeFilas = modelo.getRowCount();
-			    
-		        if(numeroDeFilas > 0) {
-		            System.out.println("Tamaño de modelo antes del for: " + modelo.getRowCount());
-		            for(int i = numeroDeFilas; i>= 1; i--) {
-		                System.out.println("Iteracion: " + i + ", filas totales: " + modelo.getRowCount());
-		                modelo.removeRow(i-1);
-
-		            }
-                    modelo.fireTableStructureChanged();
-		            System.out.println("Tamaño de modelo despues del for: " + modelo.getRowCount());
-		        }
-			    if(txtBuscar.getText().isEmpty()) {
+			    resetTablaHuespedes();
+			    resetTablaReservas();
+			    if(txtBuscar.getText().isEmpty() && panel.getSelectedIndex() == 0) {
 			        llenarTablaReservas();
-			    }else {
+			        
+			    }else if((!txtBuscar.getText().isEmpty()) && panel.getSelectedIndex() == 0){
 			        int idIngresado;
                     try {
                         idIngresado = Integer.parseInt(txtBuscar.getText());
@@ -241,7 +234,19 @@ public class Busqueda extends JFrame {
                         JOptionPane.showInternalMessageDialog(null, "Entrada no válida, favor de ingresar únicamente números", "Error", JOptionPane.ERROR_MESSAGE);
                         throw new RuntimeException(e1);
                     }
-			    }			    
+			    }else if(txtBuscar.getText().isEmpty() && panel.getSelectedIndex() == 1) {
+			        llenarTablaHuespedes();
+			    }else if((!txtBuscar.getText().isEmpty()) && panel.getSelectedIndex() == 1) {
+	                 String apellidoIngresado;
+	                    try {
+	                        apellidoIngresado = txtBuscar.getText();
+	                        llenarTablaHuespedesApellido(apellidoIngresado);
+	                    } catch (NumberFormatException e1) {
+	                        JOptionPane.showInternalMessageDialog(null, "Entrada no válida, favor de ingresar sólo texto", "Error", JOptionPane.ERROR_MESSAGE);
+	                        throw new RuntimeException(e1);
+	                    }
+                    
+                }
 			}
 		});
 		btnbuscar.setLayout(null);
@@ -263,6 +268,14 @@ public class Busqueda extends JFrame {
 		btnEditar.setBounds(635, 508, 122, 35);
 		btnEditar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 		contentPane.add(btnEditar);
+		btnEditar.addMouseListener(new MouseAdapter() {
+		    public void mouseClicked(MouseEvent e) {
+                modificarReservas();
+                resetTablaReservas();
+                llenarTablaReservas();
+		    }
+        });
+		
 		
 		JLabel lblEditar = new JLabel("EDITAR");
 		lblEditar.setHorizontalAlignment(SwingConstants.CENTER);
@@ -285,7 +298,8 @@ public class Busqueda extends JFrame {
 		lblEliminar.setBounds(0, 0, 122, 35);
 		btnEliminar.add(lblEliminar);
 		setResizable(false);
-	}
+	}	
+	
 
     private void establecerColumnasReserva() {
         modelo.addColumn("Numero de Reserva");
@@ -302,6 +316,14 @@ public class Busqueda extends JFrame {
 	private List<ReservasModelo> buscarId(int id){
 	    return this.reservasController.buscarId(id);
 	}
+	
+	private List<HuespedesModelo> buscarHuespedes(){
+	    return this.huespedesController.buscarHuespedes();
+	}
+	
+	   private List<HuespedesModelo> buscarHuespedesApellido(String apellido){
+	        return this.huespedesController.buscarHuespedesApellido(apellido);
+	    }
 	
 	private void llenarTablaReservas() {
 
@@ -326,8 +348,87 @@ public class Busqueda extends JFrame {
 	                throw new RuntimeException(e);
 	            }    
 	    }
-	
-	 private void headerMousePressed(java.awt.event.MouseEvent evt) {
+	   
+	   private void llenarTablaHuespedes() {
+	        List<HuespedesModelo> huespedes = buscarHuespedes();
+            try {
+                for(HuespedesModelo h: huespedes) {                    
+                    modeloHuesped.addRow(new Object[] {h.getId(), h.getNombre(), h.getApellido(), h.getFechaNacimiento(), h.getNacionalidad(), h.getTelefono(), h.getIdReserva()});
+                }
+            }catch(Exception e) {
+                throw new RuntimeException(e);
+            }    
+	   }
+	   
+        private void resetTablaReservas() {
+            int numeroDeFilas = modelo.getRowCount();
+
+            if (numeroDeFilas > 0) {
+                System.out.println("Tamaño de modelo reservas antes del for: " + modelo.getRowCount());
+                for (int i = numeroDeFilas; i >= 1; i--) {
+                    System.out.println("Iteracion: " + i + ", filas totales: " + modelo.getRowCount());
+                    modelo.removeRow(i - 1);
+
+                }
+                modelo.fireTableStructureChanged();
+                System.out.println("Tamaño de modelo reservas despues del for: " + modelo.getRowCount());
+            }
+        }
+        
+        private void llenarTablaHuespedesApellido(String apellido) {    
+
+            List<HuespedesModelo> huesped = buscarHuespedesApellido(apellido);  
+                try {
+                    for(HuespedesModelo h: huesped) {                    
+                        modeloHuesped.addRow(new Object[] {h.getId(), h.getNombre(), h.getApellido(), h.getFechaNacimiento(), h.getNacionalidad(), h.getTelefono(), h.getIdReserva()});
+                    }
+                }catch(Exception e) {
+                    throw new RuntimeException(e);
+                }    
+        }
+        
+        private void resetTablaHuespedes() {
+            int numeroDeFilas = modeloHuesped.getRowCount();
+
+            if (numeroDeFilas > 0) {
+                System.out.println("Tamaño de modelo huesped antes del for: " + modeloHuesped.getRowCount());
+                for (int i = numeroDeFilas; i >= 1; i--) {
+                    System.out.println("Iteracion: " + i + ", filas totales: " + modeloHuesped.getRowCount());
+                    modeloHuesped.removeRow(i - 1);
+
+                }
+                modeloHuesped.fireTableStructureChanged();
+                System.out.println("Tamaño de modelo huesped despues del for: " + modeloHuesped.getRowCount());
+            }
+        }
+        
+        private void modificarReservas() {
+            if (noTieneReservaElegida()) {
+                JOptionPane.showMessageDialog(this, "Por favor, elige un item");
+                return;
+            }
+            Optional.ofNullable(modelo.getValueAt(tbReservas.getSelectedRow(), tbReservas.getSelectedColumn()))
+                    .ifPresentOrElse(fila -> {
+                        Integer id = Integer.valueOf(modelo.getValueAt(tbReservas.getSelectedRow(), 0).toString());
+                        Date fechaEntrada = (Date) modelo.getValueAt(tbReservas.getSelectedRow(), 1);
+                        Date fechaSalida = (Date) modelo.getValueAt(tbReservas.getSelectedRow(), 2);
+                        String valor = modelo.getValueAt(tbReservas.getSelectedRow(), 3).toString();
+                        String formaDePago = modelo.getValueAt(tbReservas.getSelectedRow(), 4).toString();
+                        var filasModificadas = this.reservasController.modificar(id, fechaEntrada, fechaSalida, valor, formaDePago);
+                        System.out.println("modificar() en búsqueda");
+                        System.out.println("Variable valor -> "+valor);
+                        System.out.println("Variable formaDePago -> "+formaDePago);
+
+                        JOptionPane.showMessageDialog(this, filasModificadas + " Reserva " + String.valueOf(id) + " modificada");
+                    }, () -> JOptionPane.showMessageDialog(this, "Por favor, elije un item"));
+        }
+
+        private boolean noTieneReservaElegida() {
+            return tbReservas.getSelectedRowCount() == 0 || tbReservas.getSelectedColumnCount() == 0;
+
+        }
+        
+        private void headerMousePressed(java.awt.event.MouseEvent evt) {
 	        xMouse = evt.getX();
 	        yMouse = evt.getY();
 	    }

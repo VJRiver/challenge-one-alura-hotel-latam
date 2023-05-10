@@ -11,8 +11,7 @@ public class HuespedesModelo {
     private String telefono;
     private Integer idReserva;
 
-    public HuespedesModelo(Integer id, String nombre, String apellido, Date fechaNacimiento, String nacionalidad,
-            String telefono, Integer idReserva) {
+    public HuespedesModelo(Integer id, String nombre, String apellido, Date fechaNacimiento, String nacionalidad,String telefono, Integer idReserva) {
         this.id = id;
         this.nombre = nombre;
         this.apellido = apellido;

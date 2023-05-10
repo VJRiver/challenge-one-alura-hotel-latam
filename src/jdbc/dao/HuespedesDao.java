@@ -5,12 +5,17 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 
 import jdbc.factory.ConnectionFactory;
 import jdbc.modelo.HuespedesModelo;
+import jdbc.modelo.ReservasModelo;
 
 public class HuespedesDao {
+    final private Connection con;
     public HuespedesDao(Connection con) {
+        this.con = con;
     }
     
     public void guardarHuesped(HuespedesModelo huesped) throws Exception {
@@ -44,6 +49,50 @@ public class HuespedesDao {
                 huesped.setId(rs.getInt(1));
             }
         }
+    }
+    
+    public List<HuespedesModelo> buscarHuespedes(){
+        List<HuespedesModelo> huespedes = new ArrayList<>();
+        String sql = "SELECT id, nombre, apellido, fecha_nacimiento, nacionalidad, telefono, id reserva FROM huespedes";
+        try {
+            final PreparedStatement ps = con.prepareStatement(sql);
+            try(ps){
+                ps.execute();
+                transformarResultSetEnHuesped(huespedes, ps);
+                }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return huespedes;
+   }
+    
+    public List<HuespedesModelo> buscarHuespedesApellido(String apellido) {
+        List<HuespedesModelo> huespedes = new ArrayList<>();
+        String sql = "SELECT id, nombre, apellido, fecha_nacimiento, nacionalidad, telefono, id reserva FROM huespedes WHERE apellido = ?";
+        try {
+            final PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, apellido);
+            ps.execute();
+            transformarResultSetEnHuesped(huespedes, ps);
+        }catch(SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return huespedes;
+    }
+    
+    public void transformarResultSetEnHuesped(List<HuespedesModelo> huespedes, PreparedStatement ps) {
+        try(ResultSet rs = ps.getResultSet()){
+            while(rs.next()) {
+                HuespedesModelo huesped;
+                huesped = new HuespedesModelo(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getDate(4), rs.getString(5), rs.getString(6), rs.getInt(7));
+                huespedes.add(huesped);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println("Tamaño de lista en"
+                + " HuespedesDao.transformarResultSetEnHuesped(): " 
+                + huespedes.size());
     }
 }
 

@@ -107,14 +107,12 @@ public class ReservasDao {
             final Connection con = new ConnectionFactory().recuperarConexion();
             try(con){
                  final PreparedStatement statement = con.prepareStatement("UPDATE reservas SET "
-//                         + "id = ?"
                          + "fecha_entrada= ?, "
                          + "fecha_salida = ?, "
                          + "valor= ?,"
                          + "forma_de_pago= ? "
                          + "WHERE ID= ?");   
                  try(statement){ 
-//                     statement.setInt(1, id);
                       statement.setDate(1, fechaEntrada);
                       statement.setDate(2, fechaSalida);
                       statement.setString(3, valor);

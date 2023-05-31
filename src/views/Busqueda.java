@@ -270,9 +270,19 @@ public class Busqueda extends JFrame {
 		contentPane.add(btnEditar);
 		btnEditar.addMouseListener(new MouseAdapter() {
 		    public void mouseClicked(MouseEvent e) {
-                modificarReservas();
-                resetTablaReservas();
-                llenarTablaReservas();
+		    	System.out.println("Panel seleccionado: " + panel.getSelectedIndex());
+		    	if(panel.getSelectedIndex() == 0) {
+		    		
+	                modificarReservas();
+	                resetTablaReservas();
+	                llenarTablaReservas();
+		    	}
+                if(panel.getSelectedIndex() == 1) {
+    				modificarHuespedes();
+    				resetTablaHuespedes();
+    				llenarTablaHuespedes();
+                }
+
 		    }
         });
 		
@@ -403,6 +413,7 @@ public class Busqueda extends JFrame {
         }
         
         private void modificarReservas() {
+        	System.out.println("Valor de noTieneReservaElegida() -> " + noTieneReservaElegida());
             if (noTieneReservaElegida()) {
                 JOptionPane.showMessageDialog(this, "Por favor, elige un item");
                 return;
@@ -422,9 +433,42 @@ public class Busqueda extends JFrame {
                         JOptionPane.showMessageDialog(this, filasModificadas + " Reserva " + String.valueOf(id) + " modificada");
                     }, () -> JOptionPane.showMessageDialog(this, "Por favor, elije un item"));
         }
+        
+        private void modificarHuespedes() {
+        	System.out.println("Valor de noTieneHuespedElegido() -> " + noTieneHuespedElegido());
+            if (noTieneHuespedElegido()) {
+                JOptionPane.showMessageDialog(this, "Por favor, elige un item");
+                return;
+            }
+            Optional.ofNullable(modeloHuesped.getValueAt(tbHuespedes.getSelectedRow(), tbHuespedes.getSelectedColumn()))
+                    .ifPresentOrElse(fila -> {
+                        Integer id = Integer.valueOf(modeloHuesped.getValueAt(tbHuespedes.getSelectedRow(), 0).toString());
+                        String nombre = (String) modeloHuesped.getValueAt(tbHuespedes.getSelectedRow(), 1);
+                        String apellido = (String) modeloHuesped.getValueAt(tbHuespedes.getSelectedRow(), 2);
+                        Date fechaNacimiento = (Date) modeloHuesped.getValueAt(tbHuespedes.getSelectedRow(), 3);
+                        String nacionalidad = modeloHuesped.getValueAt(tbHuespedes.getSelectedRow(), 4).toString();
+                        String telefono = modeloHuesped.getValueAt(tbHuespedes.getSelectedRow(), 5).toString();
+                        Integer idReserva = Integer.valueOf(modeloHuesped.getValueAt(tbHuespedes.getSelectedRow(), 6).toString());
+                        var filasModificadas = this.huespedesController.modificarHuesped(id, nombre, apellido, fechaNacimiento,  nacionalidad, telefono, idReserva);
+                        System.out.println("modificar() en búsqueda");
+                        System.out.println("Variable nombre -> "+ nombre);
+                        System.out.println("Variable apellido -> "+ apellido);
+
+                        JOptionPane.showMessageDialog(this, filasModificadas + " Reserva " + String.valueOf(id) + " modificada");
+                    }, () -> JOptionPane.showMessageDialog(this, "Por favor, elije un item"));
+        }
 
         private boolean noTieneReservaElegida() {
+        	
             return tbReservas.getSelectedRowCount() == 0 || tbReservas.getSelectedColumnCount() == 0;
+
+        }
+        
+        private boolean noTieneHuespedElegido() {
+        	
+        	System.out.println("Numero de renglones elegidos: " + tbHuespedes.getSelectedRowCount());
+        	System.out.println("Numero de columnas elegidas: " + tbHuespedes.getSelectedColumnCount());
+            return tbHuespedes.getSelectedRowCount() == 0 || tbHuespedes.getSelectedColumnCount() == 0;
 
         }
         

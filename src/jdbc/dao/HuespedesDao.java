@@ -1,6 +1,7 @@
 package jdbc.dao;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -94,6 +95,38 @@ public class HuespedesDao {
                 + " HuespedesDao.transformarResultSetEnHuesped(): " 
                 + huespedes.size());
     }
+
+	public int modificarhuesped(int id, String nombre, String apellido, Date fechaNacimiento, String nacionalidad, String telefono, Integer idReserva) {
+		try {
+            final Connection con = new ConnectionFactory().recuperarConexion();
+            try(con){
+                 final PreparedStatement statement = con.prepareStatement("UPDATE"
+                 		 + " huespedes SET "
+                         + "nombre= ?, "
+                         + "apellido = ?, "
+                         + "fecha_nacimiento= ?,"
+                         + "nacionalidad= ?, "
+                         + "telefono = ? "
+                         + "WHERE ID = ?");   
+                 try(statement){ 
+                      statement.setString(1, nombre);
+                      statement.setString(2, apellido);
+                      statement.setDate(3, fechaNacimiento);
+                      statement.setString(4, nacionalidad);
+                      statement.setString(5, telefono);
+                      statement.setInt(6, id);
+                      statement.execute();        
+                      int updateCount = statement.getUpdateCount();       
+                      return updateCount;
+                 }
+              }catch(SQLException e) {
+                  throw new RuntimeException(e);
+              }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }        
+		
+	}
 }
 
 

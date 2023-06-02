@@ -127,6 +127,24 @@ public class HuespedesDao {
         }        
 		
 	}
+	
+    public int eliminarHuesped(int id) {
+    	try {
+    		final Connection con = new ConnectionFactory().recuperarConexion();
+    		try(con){
+    			final PreparedStatement ps = con.prepareStatement("DELETE FROM huespedes  WHERE ID = ?");
+    			ps.setInt(1, id);
+    			ps.execute();
+    			System.out.println("Id en HuespedesDao.eliminarHuesped() -> " + id);
+    			int updateCount = ps.getUpdateCount();
+    			return updateCount;
+    		}
+    	}catch(SQLException e) {
+    		throw new RuntimeException(e);
+    	}catch(Exception ex) {
+    		throw new RuntimeException(ex);
+    	}
+    }
 }
 
 

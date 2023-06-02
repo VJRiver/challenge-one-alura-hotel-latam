@@ -6,6 +6,7 @@ import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 import java.sql.Date;
 import java.util.List;
@@ -244,8 +245,7 @@ public class Busqueda extends JFrame {
 	                    } catch (NumberFormatException e1) {
 	                        JOptionPane.showInternalMessageDialog(null, "Entrada no válida, favor de ingresar sólo texto", "Error", JOptionPane.ERROR_MESSAGE);
 	                        throw new RuntimeException(e1);
-	                    }
-                    
+	                    }                    
                 }
 			}
 		});
@@ -300,6 +300,36 @@ public class Busqueda extends JFrame {
 		btnEliminar.setBounds(767, 508, 122, 35);
 		btnEliminar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 		contentPane.add(btnEliminar);
+		
+		btnEliminar.addMouseListener(new MouseAdapter() {
+				public void mouseClicked(MouseEvent e) {
+					if(panel.getSelectedIndex() == 0) {
+						if(noTieneReservaElegida()) {
+							JOptionPane.showMessageDialog(null, "Debe seleccionar un registro para eliminar");
+							return;
+						}
+						int id = Integer.valueOf(modelo.getValueAt(tbReservas.getSelectedRow(), 0).toString());
+						System.out.println("ID-> " + id);
+						int renglonesAfectados = reservasController.eliminar(id);
+		                resetTablaReservas();
+		                llenarTablaReservas();
+		                JOptionPane.showMessageDialog(panel, renglonesAfectados + " renglón eliminado con id " + id);
+					}
+					if(panel.getSelectedIndex() == 1) {
+						if(noTieneHuespedElegido()) {
+							JOptionPane.showMessageDialog(null, "Debe seleccionar un registro para eliminar");
+							return;
+						}
+						int id = Integer.valueOf(modeloHuesped.getValueAt(tbHuespedes.getSelectedRow(), 0).toString());
+						System.out.println("ID-> " + id);
+						int renglonesAfectados = huespedesController.eliminar(id);
+		                resetTablaHuespedes();
+		                llenarTablaHuespedes();
+		                JOptionPane.showMessageDialog(panel, renglonesAfectados + " usuario eliminado con id " + id);
+					}
+					}
+				
+			});
 		
 		JLabel lblEliminar = new JLabel("ELIMINAR");
 		lblEliminar.setHorizontalAlignment(SwingConstants.CENTER);
@@ -374,14 +404,14 @@ public class Busqueda extends JFrame {
             int numeroDeFilas = modelo.getRowCount();
 
             if (numeroDeFilas > 0) {
-                System.out.println("Tamaño de modelo reservas antes del for: " + modelo.getRowCount());
+//                System.out.println("Tamaño de modelo reservas antes del for: " + modelo.getRowCount());
                 for (int i = numeroDeFilas; i >= 1; i--) {
-                    System.out.println("Iteracion: " + i + ", filas totales: " + modelo.getRowCount());
+//                    System.out.println("Iteracion: " + i + ", filas totales: " + modelo.getRowCount());
                     modelo.removeRow(i - 1);
 
                 }
                 modelo.fireTableStructureChanged();
-                System.out.println("Tamaño de modelo reservas despues del for: " + modelo.getRowCount());
+//                System.out.println("Tamaño de modelo reservas despues del for: " + modelo.getRowCount());
             }
         }
         
@@ -401,14 +431,14 @@ public class Busqueda extends JFrame {
             int numeroDeFilas = modeloHuesped.getRowCount();
 
             if (numeroDeFilas > 0) {
-                System.out.println("Tamaño de modelo huesped antes del for: " + modeloHuesped.getRowCount());
+//                System.out.println("Tamaño de modelo huesped antes del for: " + modeloHuesped.getRowCount());
                 for (int i = numeroDeFilas; i >= 1; i--) {
-                    System.out.println("Iteracion: " + i + ", filas totales: " + modeloHuesped.getRowCount());
+//                    System.out.println("Iteracion: " + i + ", filas totales: " + modeloHuesped.getRowCount());
                     modeloHuesped.removeRow(i - 1);
 
                 }
                 modeloHuesped.fireTableStructureChanged();
-                System.out.println("Tamaño de modelo huesped despues del for: " + modeloHuesped.getRowCount());
+//                System.out.println("Tamaño de modelo huesped despues del for: " + modeloHuesped.getRowCount());
             }
         }
         

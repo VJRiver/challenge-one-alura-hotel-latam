@@ -15,7 +15,6 @@ import jdbc.modelo.ReservasModelo;
 public class ReservasDao {
 
     final private Connection con;
-//    private List<ReservasModelo> reservas = new ArrayList<>();
     public ReservasDao(Connection con) {
         this.con = con;        
     }
@@ -97,9 +96,9 @@ public class ReservasDao {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        System.out.println("Tamaño de lista en"
-                + " ReservasDao.transformarResultSetEnReserva(): " 
-                + reservas.size());
+//        System.out.println("Tamaño de lista en"
+//                + " ReservasDao.transformarResultSetEnReserva(): " 
+//                + reservas.size());
     }
 
     public int modificar(int id, Date fechaEntrada, Date fechaSalida, String valor, String formaDePago) {
@@ -128,6 +127,24 @@ public class ReservasDao {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }        
+    }
+    
+    public int eliminarReserva(int id) {
+    	try {
+    		final Connection con = new ConnectionFactory().recuperarConexion();
+    		try(con){
+    			final PreparedStatement ps = con.prepareStatement("DELETE FROM reservas  WHERE ID = ?");
+    			ps.setInt(1, id);
+    			ps.execute();
+    			System.out.println("Id en ReservasDao.eliminarReserva() -> " + id);
+    			int updateCount = ps.getUpdateCount();
+    			return updateCount;
+    		}
+    	}catch(SQLException e) {
+    		throw new RuntimeException(e);
+    	}catch(Exception ex) {
+    		throw new RuntimeException(ex);
+    	}
     }
 
 }

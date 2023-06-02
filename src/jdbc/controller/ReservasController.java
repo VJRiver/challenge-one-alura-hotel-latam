@@ -31,6 +31,10 @@ public class ReservasController {
         
         return reservasDao.modificar(id, fechaEntrada, fechaSalida, valor, formaDePago);
     }
+    
+    public int eliminar(int id) {
+    	return reservasDao.eliminarReserva(id);
+    }
 }
 
 

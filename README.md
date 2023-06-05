@@ -1,5 +1,10 @@
 # Challenge ONE | Java | Back-end | Hotel Alura
 
+<p align= "center">
+     <video src="Hotel Alura Demo.mp4" type="video/webm">
+    <p>Your browser cannot play the provided video file.</p>
+     </video>
+ </p>
 <p align="center" >
      <img width="500" heigth="500" src="cover.png">
 </p>

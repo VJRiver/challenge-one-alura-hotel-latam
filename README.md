@@ -1,7 +1,7 @@
 # Challenge ONE | Java | Back-end | Hotel Alura
 
 <p align="center" >
-     <img width="300" heigth="300" src="cover.png">
+     <img width="500" heigth="500" src="cover.png">
 </p>
 
 ---
